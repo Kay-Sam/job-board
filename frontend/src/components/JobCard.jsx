@@ -1,0 +1,3 @@
+import { Link } from 'react-router-dom'
+const labels = { full_time: 'Full time', part_time: 'Part time', contract: 'Contract', internship: 'Internship', remote: 'Remote' }
+export default function JobCard({ job }) { return <article className="job-card"><div><h2>{job.title}</h2><p className="company">{job.company}</p></div><span className={job.is_active ? 'badge active' : 'badge'}>{job.is_active ? 'Active' : 'Inactive'}</span><p>{job.location} · {labels[job.job_type] || job.job_type}</p>{job.salary && <p className="salary">Salary: {Number(job.salary).toLocaleString()}</p>}<Link className="text-link" to={`/jobs/${job.id}`}>View job →</Link></article> }
