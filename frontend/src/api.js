@@ -1,5 +1,15 @@
 import axios from "axios";
-const api = axios.create({ baseURL: "http://127.0.0.1:8000/api" });
+const apiBaseUrl =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.DEV ? "http://127.0.0.1:8000/api" : undefined);
+
+if (!apiBaseUrl) {
+  throw new Error("Set VITE_API_BASE_URL in the production environment.");
+}
+
+const api = axios.create({
+  baseURL: apiBaseUrl,
+});
 export const getJobs = (params) => api.get("/jobs/", { params });
 export const getJob = (id) => api.get(`/jobs/${id}/`);
 export const createJob = (data) => api.post("/jobs/", data);
