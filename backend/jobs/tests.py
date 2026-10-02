@@ -9,7 +9,7 @@ class JobApiTests(APITestCase):
         self.client.force_authenticate(user=self.staff)
 
     def payload(self, **overrides):
-        data = {"title": "Django Developer", "company": "Acme", "location": "Lagos", "job_type": "full_time", "description": "Build APIs.", "salary": "50000.00", "is_active": True}
+        data = {"title": "Django Developer", "company": "Acme", "location": "Lagos", "job_type": "full_time", "description": "Build APIs.", "salary": "50000.00", "currency_code": "NGN", "is_active": True}
         data.update(overrides)
         return data
     def create_job(self): return Job.objects.create(**self.payload())
@@ -44,6 +44,16 @@ class JobApiTests(APITestCase):
         response = self.client.post("/api/jobs/", self.payload(contact_email="not-an-email"), format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("contact_email", response.data)
+
+    def test_currency_code_is_returned(self):
+        response = self.client.post("/api/jobs/", self.payload(currency_code="EUR"), format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["currency_code"], "EUR")
+
+    def test_currency_code_must_be_three_uppercase_letters(self):
+        response = self.client.post("/api/jobs/", self.payload(currency_code="nzdollar"), format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("currency_code", response.data)
 
     def test_anonymous_user_can_list_and_retrieve_jobs(self):
         job = self.create_job()

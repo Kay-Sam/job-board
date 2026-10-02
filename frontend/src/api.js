@@ -7,10 +7,6 @@ if (!apiBaseUrl) {
   throw new Error("Set VITE_API_BASE_URL in the production environment.");
 }
 
-export const adminUrl =
-  import.meta.env.VITE_ADMIN_URL ||
-  `${apiBaseUrl.replace(/\/api\/?$/, "")}/admin/`;
-
 const api = axios.create({
   baseURL: apiBaseUrl,
 });
