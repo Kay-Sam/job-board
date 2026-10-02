@@ -11,6 +11,7 @@ class Job(models.Model):
     title = models.CharField(max_length=200)
     company = models.CharField(max_length=200)
     location = models.CharField(max_length=200)
+    contact_email = models.EmailField(blank=True)
     job_type = models.CharField(max_length=20, choices=JobType.choices)
     description = models.TextField()
     salary = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)])

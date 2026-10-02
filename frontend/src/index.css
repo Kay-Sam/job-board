@@ -169,7 +169,24 @@ dd {
 }
 .actions {
   display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
+}
+.contact-button {
+  margin-bottom: 4px;
+  background: #15803d;
+}
+.contact-button:hover {
+  background: #166534;
+}
+.contact-note,
+.share-message {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+.contact-note {
+  margin: 0 0 20px;
 }
 .form-page {
   max-width: 700px;

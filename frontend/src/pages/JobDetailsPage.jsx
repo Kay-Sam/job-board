@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { deleteJob, getJob } from "../api";
+import { Link, useParams } from "react-router-dom";
+import { getJob } from "../api";
 import Loading from "../components/Loading";
 const labels = {
   full_time: "Full time",
@@ -11,22 +11,33 @@ const labels = {
 };
 export default function JobDetailsPage() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [job, setJob] = useState(null),
-    [error, setError] = useState("");
+    [error, setError] = useState(""),
+    [shareMessage, setShareMessage] = useState("");
   useEffect(() => {
     getJob(id)
       .then((r) => setJob(r.data))
       .catch(() => setError("This job could not be found."));
   }, [id]);
-  const remove = async () => {
-    if (!window.confirm("Delete this job listing? This cannot be undone."))
-      return;
+  const share = async () => {
+    const url = window.location.href;
     try {
-      await deleteJob(id);
-      navigate("/jobs");
-    } catch {
-      setError("Unable to delete this job.");
+      if (navigator.share) {
+        await navigator.share({
+          title: job.title,
+          text: `${job.title} at ${job.company}`,
+          url,
+        });
+        setShareMessage("Job shared.");
+      } else if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+        setShareMessage("Job link copied.");
+      } else {
+        window.prompt("Copy this job link:", url);
+      }
+    } catch (shareError) {
+      if (shareError.name !== "AbortError")
+        setShareMessage("Could not share this job link.");
     }
   };
   if (error) return <p className="state error">{error}</p>;
@@ -67,13 +78,27 @@ export default function JobDetailsPage() {
       </dl>
       <h2>Description</h2>
       <p className="description">{job.description}</p>
+      {job.contact_email && (
+        <a
+          className="button contact-button"
+          href={`mailto:${job.contact_email}?subject=${encodeURIComponent(`Application: ${job.title}`)}`}
+        >
+          Contact HR / Apply by email
+        </a>
+      )}
+      {job.contact_email && (
+        <p className="contact-note">
+          This opens your email app; applications are not submitted or tracked
+          on this site.
+        </p>
+      )}
       <div className="actions">
-        <Link className="button" to={`/jobs/${id}/edit`}>
-          Edit
-        </Link>
-        <button className="button danger" onClick={remove}>
-          Delete
+        <button className="button" onClick={share}>
+          Share job
         </button>
+        <span className="share-message" aria-live="polite">
+          {shareMessage}
+        </span>
       </div>
     </article>
   );

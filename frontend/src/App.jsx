@@ -1,7 +1,7 @@
 import { Link, Navigate, Route, Routes } from "react-router-dom";
+import { adminUrl } from "./api";
 import JobsPage from "./pages/JobsPage";
 import JobDetailsPage from "./pages/JobDetailsPage";
-import JobFormPage from "./pages/JobFormPage";
 export default function App() {
   return (
     <>
@@ -9,17 +9,25 @@ export default function App() {
         <Link to="/jobs" className="brand">
           Mini Job Board
         </Link>
-        <Link to="/jobs/new" className="button small">
-          Post a job
-        </Link>
+        <a
+          href={adminUrl}
+          className="button small"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Staff admin
+        </a>
       </header>
       <main>
         <Routes>
           <Route path="/" element={<Navigate to="/jobs" replace />} />
           <Route path="/jobs" element={<JobsPage />} />
-          <Route path="/jobs/new" element={<JobFormPage />} />
           <Route path="/jobs/:id" element={<JobDetailsPage />} />
-          <Route path="/jobs/:id/edit" element={<JobFormPage />} />
+          <Route path="/jobs/new" element={<Navigate to="/jobs" replace />} />
+          <Route
+            path="/jobs/:id/edit"
+            element={<Navigate to="/jobs" replace />}
+          />
         </Routes>
       </main>
     </>

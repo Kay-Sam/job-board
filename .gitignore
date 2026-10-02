@@ -21,5 +21,9 @@ dist/
 .vscode/
 .idea/
 
+# Keep all Markdown documentation local-only as requested.
+*.md
+*.MD
+
 .DS_Store
 Thumbs.db
